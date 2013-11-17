@@ -4,7 +4,11 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns('monitor.views',
+    (r'^$', 'index'),
+    (r'^index/$', 'index'),
+    (r'^index/(?P<chart>\d)/$', 'index'),
+
     # Examples:
     # url(r'^$', 'rpi.views.home', name='home'),
     # url(r'^rpi/', include('rpi.foo.urls')),

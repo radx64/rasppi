@@ -1,0 +1,27 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <meta name="description" content="Temperature Monitor">
+    <meta name="author" content="R.Szewczyk, P.Szwagierek">
+
+    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+{% block style %}
+{% endblock %}
+    </style>
+    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.file-input.js"></script>
+    {% block ajax %}
+    {% endblock %}
+  </head>
+  <body>
+    {{ chart_data }}
+  </body>
+</html>
+{% endautoescape %}

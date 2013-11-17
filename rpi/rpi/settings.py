@@ -89,7 +89,7 @@ SECRET_KEY = 'zn9phoh&l*pbgn@0g$6&cj%n2^_=eg8j16uttpb+zkq4%x%ab9'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -108,6 +108,7 @@ ROOT_URLCONF = 'rpi.urls'
 WSGI_APPLICATION = 'rpi.wsgi.application'
 
 TEMPLATE_DIRS = (
+    '/home/q/rasppi/rpi/templates',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
