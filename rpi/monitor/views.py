@@ -6,12 +6,15 @@ def index(request, chart='0'):
 	if chart not in ['0', '1', '2']:
 		chart = '0'
 
+	temperature_list = Temperature.objects.all()	
+
 	chart = int(chart)
 	title = "Wykres temperatury z %d ostatnich godzin" % chart
 	return render(request, 'index.html', {
-										 'title': title,
-										 'chart_data': chart
-										 })
+					 'title': title,
+					 'chart_data': chart,
+					'temperature_list': temperature_list,
+					 })
 
 
 

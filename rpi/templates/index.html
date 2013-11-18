@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>new_inv - statistic from View 1</title>
+    <title>{{ title }}</title>
     <meta content="">
 
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.min.js"></script>
@@ -25,59 +24,21 @@
 
     <script type="text/javascript">
     $(document).ready(function() {
-    $.datepicker.setDefaults({
-        defaultDate: new Date(),
-        changeMonth: true,
-        changeYear: true,
-        dateFormat: "dd/mm/yy",
-        maxDate: "0",
-        minDate: new Date(2013, 6, 17)
-    });
 
-    $( "#date_picker_start" ).datepicker({
-        defaultDate: new Date(),
-        onSelect: function(dateStr) 
-        {
-            var min = $(this).datepicker('getDate') || new Date().getDate - 7;  // Selected date or today if none
-            $('#date_picker_end').datepicker('option', {minDate: min});
-
-            link_change();
-        }
-    });
-
-    $( "#date_picker_end" ).datepicker({
-        defaultDate: new Date(),
-        onSelect: function(dateStr) 
-        {
-            var max = $(this).datepicker('getDate') || new Date();
-            $('#date_depart').datepicker('option', {maxDate: max});
-
-            link_change();
-        }
-    });
-
-
-    var new_inv = [['14/10/13', 57], ['15/10/13', 53], ['16/10/13', 59], ['today', 55]];
-    var ticks = ['14/10/13', '15/10/13', '16/10/13', 'today'];
+    var new_inv = [{% for temp in temperature_list %}['{{ temp.date|time:"H:i" }}', {{ temp.temperature }}],{% endfor %}];
     var plot1 = $( "#chart" ).jqplot('chart', [new_inv], {
 
     series:[
         {label:'NEW AND INV.'},
     ],
     
-    legend: {
-        show: true,
-        location: 'e',
-        placement: 'outsideGrid'
-    },
-
     axes: {
         xaxis: {
             renderer: $.jqplot.CategoryAxisRenderer,
             tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
             tickOptions:{
-                angle: -90,
-                fontSize: '10pt'
+		angle: -90,
+		formatString:''
             }
         },
         yaxis:{
@@ -98,49 +59,23 @@
     });
     });
     </script>
-    <script>
-
-    function link_change()
-    {
-        var start = document.getElementById("date_picker_start");
-        var end = document.getElementById("date_picker_end");
-        var group = document.getElementById("date_picker_group");
-        var additional_serie = $("#date_picker_additional").val();
-        var form = document.getElementById("date_picker_form") || null;
-
-        var series = additional_serie.join(",");
-        if(form)
-        {
-            if (start.value=="")
-            {
-                form.action = '/lava/pronto/chart/1/'+series+'/'+group.value+'/30';
-            }
-            else
-            {
-                form.action = '/lava/pronto/chart/1/'+series+'/'+group.value+'/30/'+start.value+'/'+end.value;
-            }
-        }
-    }
-    </script>
 
 </head>
 <body>
 
     <form id="date_picker_form" action="" method="GET">
         <label for="date_picker_group">Group</label>
-        
-        <select onchange="link_change()" id="date_picker_group">
-            <option>day</option>
-            <option>year</option>
+        <select id="date_picker_group">
+            <option value="0">3 godziny</option>
+            <option value="1">24 godziny</option>
+            <option value="2">3 dni</option>
         </select>
 
         <input type="submit" value="Submit">
-        <a href="/lava/pronto/view1"><button type="button">Main View</button></a>
     </form>  
 
     <h1>{{ title }}</h1>
     <div id="chart">
     </div>
-
 </body>
 </html>
