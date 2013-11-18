@@ -1,27 +1,146 @@
-{% autoescape off %}
+
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{{ title }}</title>
-    <meta name="description" content="Temperature Monitor">
-    <meta name="author" content="R.Szewczyk, P.Szwagierek">
+<html>
 
-    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-{% block style %}
-{% endblock %}
-    </style>
-    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+<head>
+    <title>new_inv - statistic from View 1</title>
+    <meta content="">
 
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.file-input.js"></script>
-    {% block ajax %}
-    {% endblock %}
-  </head>
-  <body>
-    {{ chart_data }}
-  </body>
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery-ui.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.barRenderer.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.categoryAxisRenderer.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.pointLabels.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.canvasTextRenderer.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.canvasAxisLabelRenderer.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.highlighter.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.cursor.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.dateAxisRenderer.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jqplot.canvasAxisTickRenderer.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery-ui.theme.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery.jqplot.min.css" />
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+    $.datepicker.setDefaults({
+        defaultDate: new Date(),
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "dd/mm/yy",
+        maxDate: "0",
+        minDate: new Date(2013, 6, 17)
+    });
+
+    $( "#date_picker_start" ).datepicker({
+        defaultDate: new Date(),
+        onSelect: function(dateStr) 
+        {
+            var min = $(this).datepicker('getDate') || new Date().getDate - 7;  // Selected date or today if none
+            $('#date_picker_end').datepicker('option', {minDate: min});
+
+            link_change();
+        }
+    });
+
+    $( "#date_picker_end" ).datepicker({
+        defaultDate: new Date(),
+        onSelect: function(dateStr) 
+        {
+            var max = $(this).datepicker('getDate') || new Date();
+            $('#date_depart').datepicker('option', {maxDate: max});
+
+            link_change();
+        }
+    });
+
+
+    var new_inv = [['14/10/13', 57], ['15/10/13', 53], ['16/10/13', 59], ['today', 55]];
+    var ticks = ['14/10/13', '15/10/13', '16/10/13', 'today'];
+    var plot1 = $( "#chart" ).jqplot('chart', [new_inv], {
+
+    series:[
+        {label:'NEW AND INV.'},
+    ],
+    
+    legend: {
+        show: true,
+        location: 'e',
+        placement: 'outsideGrid'
+    },
+
+    axes: {
+        xaxis: {
+            renderer: $.jqplot.CategoryAxisRenderer,
+            tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
+            tickOptions:{
+                angle: -90,
+                fontSize: '10pt'
+            }
+        },
+        yaxis:{
+            tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
+            tickOptions:{
+                formatString:'%d',
+            }
+        }
+    },
+    highlighter: {
+    show: true,
+    sizeAdjust: 7.5,
+    tooltipAxes: 'y'
+    },
+    cursor: {
+    show: false
+    }
+    });
+    });
+    </script>
+    <script>
+
+    function link_change()
+    {
+        var start = document.getElementById("date_picker_start");
+        var end = document.getElementById("date_picker_end");
+        var group = document.getElementById("date_picker_group");
+        var additional_serie = $("#date_picker_additional").val();
+        var form = document.getElementById("date_picker_form") || null;
+
+        var series = additional_serie.join(",");
+        if(form)
+        {
+            if (start.value=="")
+            {
+                form.action = '/lava/pronto/chart/1/'+series+'/'+group.value+'/30';
+            }
+            else
+            {
+                form.action = '/lava/pronto/chart/1/'+series+'/'+group.value+'/30/'+start.value+'/'+end.value;
+            }
+        }
+    }
+    </script>
+
+</head>
+<body>
+
+    <form id="date_picker_form" action="" method="GET">
+        <label for="date_picker_group">Group</label>
+        
+        <select onchange="link_change()" id="date_picker_group">
+            <option>day</option>
+            <option>year</option>
+        </select>
+
+        <input type="submit" value="Submit">
+        <a href="/lava/pronto/view1"><button type="button">Main View</button></a>
+    </form>  
+
+    <h1>{{ title }}</h1>
+    <div id="chart">
+    </div>
+
+</body>
 </html>
-{% endautoescape %}

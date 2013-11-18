@@ -6,8 +6,7 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('monitor.views',
     (r'^$', 'index'),
-    (r'^index/$', 'index'),
-    (r'^index/(?P<chart>\d)/$', 'index'),
+    (r'^(?P<chart>\d)/$', 'index'),
 
     # Examples:
     # url(r'^$', 'rpi.views.home', name='home'),
