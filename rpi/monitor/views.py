@@ -1,25 +1,34 @@
 from django.shortcuts import render
 from monitor.models import Temperature
+from datetime import datetime, timedelta
 
-chart_types = {
+CHART_TYPES = {
 	'0': "3 godziny",
 	'1': '24 godziny',
 	'2': '3 dni'
 }
 
-def index(request, chart='0'):
-	if chart not in chart_types.keys():
-		chart = '0'
+def index(request, chart_interval='0'):
+	title = "Wykres temperatury z ostatnich %s" % CHART_TYPES[chart_interval]
+	
+	if chart_interval not in CHART_TYPES.keys():
+		chart_interval = '0'
 
-	temperature_list = Temperature.objects.all()	
+	if chart_interval == '0':
+		temperature_list = Temperature.objects.filter(date__gte=(datetime.today()-timedelta(hours=3)))
+	elif chart_interval == '1':
+		temperature_list = Temperature.objects.filter(date__gte=(datetime.today()-timedelta(days=1)))
+	elif chart_interval == '2':
+		temperature_list = Temperature.objects.filter(date__gte=(datetime.today()-timedelta(days=3)))
+	else:
+		temperature_list = []
 
-	title = "Wykres temperatury z ostatnich %s" % chart_types[chart]
 	return render(request, 'index.html', {
-					 'title': title,
-					 'chart_types': sorted(chart_types.iteritems()),
-					 'chart_data': chart,
-					'temperature_list': temperature_list,
-					 })
+		'title': title,
+		'chart_types': sorted(CHART_TYPES.iteritems()),
+		'chart_interval': chart_interval,
+		'temperature_list': temperature_list,
+	})
 
 
 
