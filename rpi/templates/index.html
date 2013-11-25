@@ -21,12 +21,19 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery-ui.theme.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery.jqplot.min.css" />
+    <link rel="stylesheet" typr="text/css" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+    <script type="text/JavaScript">
+    function timedRefresh(timeoutPeriod) 
+    {
+        setTimeout("location.reload(true);",timeoutPeriod);
+    }
+    </script>
 
     <script type="text/javascript">
     $(document).ready(function() {
 
-        var new_inv = [{% for temp in temperature_list %}['{{ temp.date|time:"H:i" }}', {{ temp.temperature }}],{% endfor %}];
-        var plot1 = $( "#chart" ).jqplot('chart', [new_inv], {
+        var Temperatura = [{% for temp in temperature_list %}['{{ temp.date|time:"H:i" }}', {{ temp.temperature }}],{% endfor %}];
+        var plot1 = $( "#chart" ).jqplot('chart', [Temperatura], {
 
             series:[
             {label:'Temperatura.'},
@@ -44,7 +51,7 @@
               yaxis:{
                 tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
                 tickOptions:{
-                    formatString:'%d',
+                    formatString:'%.1f',
                 }
             }
         },
@@ -75,19 +82,37 @@
     </script>
 
 </head>
-<body>
+<body onload="JavaScript:timedRefresh(60000);">
 
-    <form id="chart_form" action="" method="GET">
-        <label for="chart_period">Okres</label>
-        <select onchange="link_change()" id="chart_period">
+    <form id="chart_form" action="" method="GET" class="pure-form">
+       	
+	<label for="chart_period">Okres:</label>
+        <select onchange="link_change()" id="chart_period" class="pure-input-1-8">
 {% for value, description in chart_types %}            <option value="{{ value }}"{% if value == chart_interval %} selected{% endif %}>{{ description }}</option>
 {% endfor %}
         </select>
-        <input type="submit" value="Submit">
-    </form>  
 
-    <h1>{{ title }}</h1>
+
+        <input type="submit" value="Zastosuj" class="pure-button pure-button-primary">
+    <legend>{{ title }}</legend>
+    </form>  
+{% if temperature_list %}
     <div id="chart">
     </div>
+{% else %}
+    <h1>!!! BRAK DANYCH DO WYŚWIETLENIA !!!</h1>
+{% endif %}
+
+<div align="right">
+   <div class="pure-u-2-5">
+        <div class="r-box">
+<br />
+<hr>
+<h6>Projekt - Zastosowania Systemów Wbudowanych<br />
+Autorzy: R.Szewczyk (184792), P.Szwagierek (184763)</h6>
+        </div>
+    </div>
+</div>
+  
 </body>
 </html>
